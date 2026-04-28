@@ -23,20 +23,20 @@ export default function EmptyState({
     const iconStyle = {
       width: '64px',
       height: '64px',
-      borderRadius: '50%',
+      borderRadius: 'var(--credence-radius-full)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      margin: '0 auto 1rem',
+      margin: '0 auto var(--credence-space-4)',
       fontSize: '2rem',
     }
 
     const illustrations = {
-      bond: { bg: '#dbeafe', emoji: '🔒' },
-      trust: { bg: '#ddd6fe', emoji: '⭐' },
-      dispute: { bg: '#fee2e2', emoji: '⚖️' },
-      attestation: { bg: '#d1fae5', emoji: '✓' },
-      activity: { bg: '#fef3c7', emoji: '📊' },
+      bond: { bg: 'var(--credence-color-platinum-surface)', emoji: 'ðŸ”’' },
+      trust: { bg: 'var(--credence-color-trust-surface)', emoji: 'â­' },
+      dispute: { bg: 'var(--credence-color-danger-surface-strong)', emoji: 'âš–ï¸' },
+      attestation: { bg: 'var(--credence-color-attestation-surface)', emoji: 'âœ“' },
+      activity: { bg: 'var(--credence-color-bronze-surface)', emoji: 'ðŸ“Š' },
     }
 
     const config = illustration ? illustrations[illustration] : null
@@ -46,11 +46,7 @@ export default function EmptyState({
     }
 
     if (config) {
-      return (
-        <div style={{ ...iconStyle, background: config.bg }}>
-          {config.emoji}
-        </div>
-      )
+      return <div style={{ ...iconStyle, background: config.bg }}>{config.emoji}</div>
     }
 
     return null
@@ -60,7 +56,7 @@ export default function EmptyState({
     <div
       style={{
         textAlign: 'center',
-        padding: '3rem 1.5rem',
+        padding: 'var(--credence-space-12) var(--credence-space-6)',
         maxWidth: '28rem',
         margin: '0 auto',
       }}
@@ -68,20 +64,20 @@ export default function EmptyState({
       {getIllustration()}
       <h3
         style={{
-          fontSize: '1.125rem',
-          fontWeight: 600,
-          color: '#0f172a',
-          marginBottom: '0.5rem',
+          fontSize: 'var(--credence-font-size-lg)',
+          fontWeight: 'var(--credence-font-weight-semibold)',
+          color: 'var(--credence-text-primary)',
+          marginBottom: 'var(--credence-space-2)',
         }}
       >
         {title}
       </h3>
       <p
         style={{
-          color: '#64748b',
-          fontSize: '0.875rem',
-          lineHeight: '1.5',
-          marginBottom: action ? '1.5rem' : '0',
+          color: 'var(--credence-text-secondary)',
+          fontSize: 'var(--credence-font-size-sm)',
+          lineHeight: 'var(--credence-line-height-base)',
+          marginBottom: action ? 'var(--credence-space-6)' : '0',
         }}
       >
         {description}
@@ -90,14 +86,20 @@ export default function EmptyState({
         <button
           onClick={action.onClick}
           style={{
-            padding: '0.75rem 1.5rem',
-            background: action.variant === 'secondary' ? '#e2e8f0' : '#0ea5e9',
-            color: action.variant === 'secondary' ? '#0f172a' : '#fff',
+            padding: 'var(--credence-space-3) var(--credence-space-6)',
+            background:
+              action.variant === 'secondary'
+                ? 'var(--credence-border-default)'
+                : 'var(--credence-color-primary-soft)',
+            color:
+              action.variant === 'secondary'
+                ? 'var(--credence-text-primary)'
+                : 'var(--credence-color-white)',
             border: 'none',
-            borderRadius: '8px',
-            fontWeight: 600,
+            borderRadius: 'var(--credence-radius-lg)',
+            fontWeight: 'var(--credence-font-weight-semibold)',
             cursor: 'pointer',
-            fontSize: '0.875rem',
+            fontSize: 'var(--credence-font-size-sm)',
           }}
         >
           {action.label}

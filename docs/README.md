@@ -12,7 +12,12 @@ This directory contains comprehensive design specifications and implementation g
    - When and how to use each state type
    - Validation checklist
 
-2. **[Figma Design Specs](./FIGMA_DESIGN_SPECS.md)**
+2. **[Design Tokens](./DESIGN_TOKENS.md)**
+   - Canonical `--credence-*` CSS variable reference
+   - Color, spacing, radius, and typography scales
+   - Guidance for replacing one-off hex values in components
+
+3. **[Figma Design Specs](./FIGMA_DESIGN_SPECS.md)**
    - Visual design specifications
    - Color palette and design tokens
    - Layout measurements and spacing
@@ -20,7 +25,7 @@ This directory contains comprehensive design specifications and implementation g
    - Responsive breakpoints
    - Component organization structure
 
-3. **[Implementation Examples](./IMPLEMENTATION_EXAMPLES.md)**
+4. **[Implementation Examples](./IMPLEMENTATION_EXAMPLES.md)**
    - Practical code examples for each page
    - Reusable hooks and patterns
    - Testing examples
@@ -36,11 +41,11 @@ import { EmptyState, ErrorState, LoadingSkeleton } from '../components/states'
 
 function MyComponent() {
   const { data, isLoading, error } = useQuery()
-  
+
   if (isLoading) return <LoadingSkeleton variant="card" />
   if (error) return <ErrorState type="network" />
   if (!data) return <EmptyState title="No data" description="..." />
-  
+
   return <Content data={data} />
 }
 ```

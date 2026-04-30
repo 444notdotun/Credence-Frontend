@@ -67,7 +67,7 @@ export default function Bond() {
               color: 'var(--text-primary)',
             }}
           />
-          <button
+          <Button
             type="button"
             onClick={handleCreate}
             style={{

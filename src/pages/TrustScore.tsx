@@ -2,6 +2,7 @@ import Banner from '../components/Banner'
 import Disclaimer from '../components/Disclaimer'
 import { useToast } from '../components/ToastProvider'
 import Badge from '../components/Badge'
+import Button from '../components/Button'
 
 export default function TrustScore() {
   const { addToast } = useToast()
@@ -59,22 +60,14 @@ export default function TrustScore() {
               color: 'var(--text-primary)',
             }}
           />
-          <button
+          <Button
             type="button"
             onClick={handleLookup}
-            style={{
-              width: '100%',
-              padding: '0.75rem',
-              background: 'var(--color-primary)',
-              color: 'var(--bg-page)',
-              border: 'none',
-              borderRadius: '8px',
-              fontWeight: 600,
-              cursor: 'pointer',
-            }}
+            variant="primary"
+            fullWidth
           >
             Look up score
-          </button>
+          </Button>
         </div>
 
         <div

@@ -1,33 +1,51 @@
 /*
- * Intentionally secondary: small type, muted color, generous top margin.
+ * Unobtrusive but visible risk disclaimer placement.
+ * Improved readability with better contrast and spacing.
  * Must not compete visually with primary CTAs or page headings.
  */
 .disclaimer {
   margin-top: var(--credence-space-8);
-  max-width: 52ch;
-  font-size: var(--credence-font-size-xs);
+  padding: var(--credence-space-4);
+  max-width: 65ch;
+  font-size: var(--credence-font-size-sm);
   line-height: var(--credence-line-height-relaxed);
-  color: var(--credence-color-slate-400);
-  border-top: 1px solid var(--credence-border-default);
-  padding-top: var(--credence-space-4);
+  color: var(--credence-text-secondary);
+  background: var(--credence-color-slate-50);
+  border-left: 3px solid var(--credence-color-warning-border);
+  border-radius: var(--credence-radius-md);
+}
+
+[data-theme='dark'] .disclaimer {
+  background: rgba(148, 163, 184, 0.05);
+  border-left-color: var(--credence-color-warning-text);
+}
+
+.disclaimer p {
+  margin: 0;
 }
 
 .disclaimer p + p {
-  margin-top: var(--credence-space-1);
+  margin-top: var(--credence-space-3);
+}
+
+.disclaimer p:first-child {
+  font-weight: var(--credence-font-weight-semibold);
+  color: var(--credence-text-primary);
 }
 
 .disclaimer a {
-  color: var(--credence-color-slate-400);
+  color: var(--credence-color-primary);
   text-decoration: underline;
   text-underline-offset: 2px;
+  font-weight: var(--credence-font-weight-semibold);
 }
 
 .disclaimer a:hover {
-  color: var(--credence-text-secondary);
+  color: var(--credence-color-primary-strong);
 }
 
 .disclaimer a:focus-visible {
-  outline: 2px solid var(--credence-color-slate-400);
+  outline: var(--credence-focus-ring);
   outline-offset: 2px;
   border-radius: var(--credence-radius-sm);
 }

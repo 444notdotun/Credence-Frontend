@@ -1,6 +1,103 @@
 # Implementation Examples
 
-This document provides practical code examples for implementing empty states, error states, and loading skeletons in Credence Frontend pages.
+This document provides practical code examples for implementing buttons, empty states, error states, and loading skeletons in Credence Frontend pages.
+
+---
+
+## Button Component Examples
+
+### Basic Button Usage
+
+```tsx
+import Button from '../components/Button'
+
+// Primary button (main CTAs)
+<Button variant="primary" onClick={handleSubmit}>
+  Create bond
+</Button>
+
+// Secondary button (alternative actions)
+<Button variant="secondary" onClick={handleCancel}>
+  Cancel
+</Button>
+
+// Ghost button (subtle actions)
+<Button variant="ghost" onClick={handleDismiss}>
+  Skip
+</Button>
+
+// Full width button
+<Button variant="primary" fullWidth onClick={handleAction}>
+  Continue
+</Button>
+
+// Loading state
+<Button variant="primary" isLoading={isSubmitting}>
+  Creating bond...
+</Button>
+
+// Disabled state
+<Button variant="primary" disabled>
+  Unavailable
+</Button>
+```
+
+### Form with Button Actions
+
+```tsx
+import Button from '../components/Button'
+
+export default function BondForm() {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true)
+    try {
+      await createBond()
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+      <input type="number" placeholder="Amount" />
+      
+      <div style={{ display: 'flex', gap: 'var(--credence-space-3)', marginTop: 'var(--credence-space-4)' }}>
+        <Button variant="secondary" type="button" onClick={handleCancel}>
+          Cancel
+        </Button>
+        <Button variant="primary" type="submit" isLoading={isSubmitting}>
+          Create bond
+        </Button>
+      </div>
+    </form>
+  )
+}
+```
+
+### Card with Button CTA
+
+```tsx
+import Button from '../components/Button'
+
+export default function FeatureCard() {
+  return (
+    <div style={{
+      padding: 'var(--credence-space-6)',
+      border: '1px solid var(--credence-border-default)',
+      borderRadius: 'var(--credence-radius-lg)',
+      background: 'var(--credence-surface-card)',
+    }}>
+      <h3>Create Your First Bond</h3>
+      <p>Lock USDC to build your economic reputation.</p>
+      <Button variant="primary" fullWidth onClick={handleGetStarted}>
+        Get started
+      </Button>
+    </div>
+  )
+}
+```
 
 ---
 

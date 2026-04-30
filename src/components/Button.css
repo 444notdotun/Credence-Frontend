@@ -1,0 +1,182 @@
+/*
+ * Button System: primary/secondary/ghost variants + disabled/loading states
+ * Follows Credence design tokens and accessibility requirements
+ */
+
+.credence-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--credence-space-2);
+  padding: var(--credence-space-3) var(--credence-space-6);
+  font-family: var(--credence-font-family-base);
+  font-size: var(--credence-font-size-base);
+  font-weight: var(--credence-font-weight-semibold);
+  line-height: var(--credence-line-height-tight);
+  border-radius: var(--credence-radius-lg);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.1s ease;
+  white-space: nowrap;
+}
+
+.credence-button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.credence-button:focus-visible {
+  outline: var(--credence-focus-ring);
+  outline-offset: 2px;
+}
+
+.credence-button--full-width {
+  width: 100%;
+}
+
+/* Primary variant - main CTAs */
+.credence-button--primary {
+  background: var(--credence-color-primary);
+  color: var(--credence-color-white);
+  border-color: var(--credence-color-primary);
+}
+
+.credence-button--primary:hover:not(:disabled) {
+  background: var(--credence-color-primary-strong);
+  border-color: var(--credence-color-primary-strong);
+}
+
+.credence-button--primary:active:not(:disabled) {
+  background: var(--credence-color-primary-strong);
+}
+
+/* Secondary variant - alternative actions */
+.credence-button--secondary {
+  background: var(--credence-surface-card);
+  color: var(--credence-text-primary);
+  border-color: var(--credence-border-default);
+}
+
+.credence-button--secondary:hover:not(:disabled) {
+  background: var(--credence-color-slate-100);
+  border-color: var(--credence-color-slate-400);
+}
+
+.credence-button--secondary:active:not(:disabled) {
+  background: var(--credence-color-slate-200);
+}
+
+[data-theme='dark'] .credence-button--secondary {
+  background: var(--credence-color-slate-700);
+  border-color: var(--credence-color-slate-600);
+}
+
+[data-theme='dark'] .credence-button--secondary:hover:not(:disabled) {
+  background: var(--credence-color-slate-600);
+  border-color: var(--credence-color-slate-500);
+}
+
+/* Ghost variant - subtle actions */
+.credence-button--ghost {
+  background: transparent;
+  color: var(--credence-color-primary);
+  border-color: transparent;
+}
+
+.credence-button--ghost:hover:not(:disabled) {
+  background: var(--credence-color-info-surface);
+  color: var(--credence-color-primary-strong);
+}
+
+.credence-button--ghost:active:not(:disabled) {
+  background: var(--credence-color-slate-200);
+}
+
+[data-theme='dark'] .credence-button--ghost:hover:not(:disabled) {
+  background: rgba(56, 189, 248, 0.1);
+}
+
+[data-theme='dark'] .credence-button--ghost:active:not(:disabled) {
+  background: rgba(56, 189, 248, 0.15);
+}
+
+/* Disabled state - all variants */
+.credence-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.credence-button--primary:disabled {
+  background: var(--credence-color-slate-400);
+  border-color: var(--credence-color-slate-400);
+}
+
+.credence-button--secondary:disabled {
+  background: var(--credence-color-slate-100);
+  border-color: var(--credence-color-slate-200);
+  color: var(--credence-color-slate-400);
+}
+
+[data-theme='dark'] .credence-button--secondary:disabled {
+  background: var(--credence-color-slate-700);
+  border-color: var(--credence-color-slate-600);
+  color: var(--credence-color-slate-500);
+}
+
+.credence-button--ghost:disabled {
+  color: var(--credence-color-slate-400);
+}
+
+/* Loading state */
+.credence-button__spinner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.credence-button__spinner-icon {
+  width: 20px;
+  height: 20px;
+  animation: spin 0.8s linear infinite;
+}
+
+.credence-button__spinner-track {
+  opacity: 0.25;
+  stroke-dasharray: 0;
+}
+
+.credence-button__spinner-head {
+  opacity: 0.75;
+  stroke-dasharray: 50;
+  stroke-dashoffset: 0;
+  transform-origin: center;
+}
+
+.credence-button__content--loading {
+  visibility: hidden;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+  .credence-button {
+    padding: var(--credence-space-3) var(--credence-space-4);
+    font-size: var(--credence-font-size-sm);
+  }
+}

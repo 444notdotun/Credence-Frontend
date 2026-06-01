@@ -1,17 +1,10 @@
 import Banner from '../components/Banner'
 import Disclaimer from '../components/Disclaimer'
-import { useToast } from '../components/ToastProvider'
 import Badge from '../components/Badge'
 import ActionCard from '../components/ActionCard'
-import Button from '../components/Button'
+import CreateBondFlow from '../components/CreateBondFlow'
 
 export default function Bond() {
-  const { addToast } = useToast()
-
-  const handleCreate = () => {
-    addToast('success', 'Bond created successfully.')
-  }
-
   const mockBonds = [
     { id: 1, amount: '500 USDC', status: 'active' },
     { id: 2, amount: '1000 USDC', status: 'locked' },
@@ -26,9 +19,6 @@ export default function Bond() {
           Lock USDC into the Credence contract to build your economic reputation.
         </p>
       </div>
-      <Banner severity="info">
-        Bonds are locked for a minimum of 30 days. Early withdrawal incurs a slash penalty.
-      </Banner>
 
       <div
         style={{
@@ -39,52 +29,7 @@ export default function Bond() {
         }}
       >
         <ActionCard title="Create New Bond">
-          <label
-            htmlFor="bond-amount"
-            style={{
-              display: 'block',
-              marginBottom: 'var(--credence-space-2)',
-              fontWeight: 'var(--credence-font-weight-semibold)',
-              color: 'var(--credence-text-secondary)',
-            }}
-          >
-            Amount (USDC)
-          </label>
-          <input
-              id="bond-amount"
-              type="number"
-              placeholder="0"
-              min="0"
-              step="1"
-              aria-describedby="bond-desc"
-              className="focus-visible"
-              style={{
-                width: '100%',
-                padding: 'var(--credence-space-3) var(--credence-space-4)',
-                border: '1px solid var(--border-default)',
-                borderRadius: 'var(--credence-radius-lg)',
-                fontSize: 'var(--credence-font-size-base)',
-                margin: 0,
-                background: 'var(--bg-page)',
-                color: 'var(--text-primary)',
-              }}
-            />
-          <Button
-            type="button"
-            onClick={handleCreate}
-            style={{
-              width: '100%',
-              padding: 'var(--credence-space-3) var(--credence-space-4)',
-              background: 'var(--color-primary)',
-              color: 'var(--bg-page)',
-              border: 'none',
-              borderRadius: 'var(--credence-radius-lg)',
-              fontWeight: 'var(--credence-font-weight-semibold)',
-              cursor: 'pointer',
-            }}
-          >
-            Create bond
-          </Button>
+          <CreateBondFlow />
         </ActionCard>
 
         <ActionCard title="Active Bonds">
@@ -109,11 +54,7 @@ export default function Bond() {
           </ul>
         </ActionCard>
       </div>
-
-      <Disclaimer
-        context="Bonding USDC locks funds in a non-custodial smart contract. Slashing conditions apply."
-        termsHref="#"
-      />
     </div>
   )
 }
+

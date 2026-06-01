@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, useRef, type ReactNode } from 'react'
+import { useSettings } from '../context/SettingsContext'
 import Toast, { type ToastData, type ToastSeverity } from './Toast'
 import './Toast.css'
 
@@ -26,6 +27,7 @@ export function useToast() {
 }
 
 export default function ToastProvider({ children }: { children: ReactNode }) {
+  const { toastsEnabled, autoDismiss } = useSettings()
   const [toasts, setToasts] = useState<ToastData[]>([])
   const idCounter = useRef(0)
 
@@ -39,13 +41,27 @@ export default function ToastProvider({ children }: { children: ReactNode }) {
 
   const addToast = useCallback(
     (severity: ToastSeverity, message: string) => {
+      // respect global toast enable setting
+      if (!toastsEnabled) return
       const id = String(++idCounter.current)
       setToasts((prev: ToastData[]) => {
         const next = [...prev, { id, severity, message }]
         return next.length > MAX_TOASTS ? next.slice(next.length - MAX_TOASTS) : next
       })
 
-      const timeout = TIMEOUTS[severity]
+      // compute timeout: settings `autoDismiss` can override default TIMEOUTS
+      let timeout = TIMEOUTS[severity]
+      try {
+        if (autoDismiss === 'off') {
+          timeout = 0
+        } else if (typeof autoDismiss === 'string' && autoDismiss.endsWith('s')) {
+          const seconds = Number(autoDismiss.replace('s', ''))
+          if (!Number.isNaN(seconds)) timeout = seconds * 1000
+        }
+      } catch {
+        // fallback to default
+      }
+
       if (timeout > 0) {
         setTimeout(() => removeToast(id), timeout)
       }

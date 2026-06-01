@@ -1,0 +1,66 @@
+.settings-page {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.settings-page h1 {
+  font-size: var(--credence-font-size-xl);
+  margin-bottom: 0.25rem;
+}
+
+.settings-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  padding: 1rem;
+  border-radius: var(--credence-radius-md);
+}
+
+.settings-section h2 {
+  font-size: var(--credence-font-size-lg);
+  margin-bottom: 0.25rem;
+}
+
+.settings-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.form-hint {
+  color: var(--text-secondary);
+  font-size: var(--credence-font-size-sm);
+  margin-bottom: 0.5rem;
+}
+
+.control-toggle {
+  padding: 0.375rem 0.75rem !important;
+  border-radius: var(--credence-radius-full) !important;
+  border: 1px solid var(--border-default) !important;
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+}
+
+.control-select {
+  padding: 0.5rem 0.6rem !important;
+  border-radius: var(--credence-radius-md) !important;
+  border: 1px solid var(--border-default) !important;
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Responsive layout: single column on small screens, two columns on wide */
+@media (min-width: 900px) {
+  .settings-page {
+    grid-template-columns: 1fr 360px;
+    align-items: start;
+  }
+
+  .settings-section {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 374px) {
+  .settings-page {
+    padding: 0.5rem;
+  }
+}

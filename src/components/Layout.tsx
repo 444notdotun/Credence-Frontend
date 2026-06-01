@@ -39,6 +39,7 @@ export default function Layout() {
         <nav aria-label="Main navigation" style={{ display: 'flex', gap: '1rem', flex: 1 }}>
           <Link to="/bond">Bond</Link>
           <Link to="/trust">Trust Score</Link>
+          <Link to="/settings">Settings</Link>
         </nav>
         <ThemeToggle />
       </header>

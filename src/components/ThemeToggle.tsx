@@ -1,23 +1,28 @@
 import { useEffect, useState } from 'react'
+import { useSettings } from '../context/SettingsContext'
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('theme')
-      if (saved) return saved
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-    }
-    return 'light'
-  })
+  const { themeMode, setThemeMode } = useSettings()
+  const [resolved, setResolved] = useState<'light' | 'dark'>(() =>
+    typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  )
 
   useEffect(() => {
-    const root = window.document.documentElement
-    root.setAttribute('data-theme', theme)
-    localStorage.setItem('theme', theme)
-  }, [theme])
+    if (themeMode === 'system') {
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      setResolved(isDark ? 'dark' : 'light')
+    } else {
+      setResolved(themeMode)
+    }
+  }, [themeMode])
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'))
+    // if system, switch to explicit opposite of resolved
+    if (themeMode === 'system') {
+      setThemeMode(resolved === 'light' ? 'dark' : 'light')
+    } else {
+      setThemeMode(themeMode === 'light' ? 'dark' : 'light')
+    }
   }
 
   return (
@@ -40,9 +45,9 @@ export default function ThemeToggle() {
         transition:
           'all var(--credence-motion-duration-base) var(--credence-motion-easing-standard)',
       }}
-      title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+      title={`Switch to ${resolved === 'light' ? 'dark' : 'light'} mode`}
     >
-      {theme === 'light' ? '🌙' : '☀️'}
+      {resolved === 'light' ? '🌙' : '☀️'}
     </button>
   )
 }

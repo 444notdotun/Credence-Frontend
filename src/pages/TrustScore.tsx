@@ -3,6 +3,7 @@ import Disclaimer from '../components/Disclaimer'
 import { useToast } from '../components/ToastProvider'
 import Badge from '../components/Badge'
 import Button from '../components/Button'
+import EmptyState from '../components/states/EmptyState'
 
 export default function TrustScore() {
   const { addToast } = useToast()
@@ -11,11 +12,8 @@ export default function TrustScore() {
     addToast('success', 'Trust score retrieved.')
   }
 
-  const mockActivity = [
-    { id: 1, action: 'Bond Created', date: '2024-03-25', status: 'active' },
-    { id: 2, action: 'Attestation Received', date: '2024-03-20', status: 'active' },
-    { id: 3, action: 'Bond Slashed', date: '2024-03-15', status: 'slashed' },
-  ]
+  const activity: Array<{ id: number; action: string; date: string; status: 'active' | 'slashed' }> =
+    []
 
   return (
     <div>
@@ -92,29 +90,37 @@ export default function TrustScore() {
           }}
         >
           <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Recent Activity</h2>
-          <ul style={{ listStyle: 'none', padding: 0 }}>
-            {mockActivity.map((item) => (
-              <li
-                key={item.id}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '0.75rem 0',
-                  borderBottom:
-                    item.id === mockActivity.length ? 'none' : '1px solid var(--border-default)',
-                }}
-              >
-                <div>
-                  <div style={{ fontWeight: 500 }}>{item.action}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                    {item.date}
+          {activity.length === 0 ? (
+            <EmptyState
+              illustration="activity"
+              title="No recent activity"
+              description="New trust score events will appear here once bonds, attestations, or score updates occur."
+            />
+          ) : (
+            <ul style={{ listStyle: 'none', padding: 0 }}>
+              {activity.map((item) => (
+                <li
+                  key={item.id}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '0.75rem 0',
+                    borderBottom:
+                      item.id === activity.length ? 'none' : '1px solid var(--border-default)',
+                  }}
+                >
+                  <div>
+                    <div style={{ fontWeight: 500 }}>{item.action}</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                      {item.date}
+                    </div>
                   </div>
-                </div>
-                <Badge variant={item.status} />
-              </li>
-            ))}
-          </ul>
+                  <Badge variant={item.status} />
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
 

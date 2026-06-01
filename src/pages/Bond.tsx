@@ -4,6 +4,7 @@ import { useToast } from '../components/ToastProvider'
 import Badge from '../components/Badge'
 import ActionCard from '../components/ActionCard'
 import Button from '../components/Button'
+import EmptyState from '../components/states/EmptyState'
 
 export default function Bond() {
   const { addToast } = useToast()
@@ -12,11 +13,15 @@ export default function Bond() {
     addToast('success', 'Bond created successfully.')
   }
 
-  const mockBonds = [
-    { id: 1, amount: '500 USDC', status: 'active' },
-    { id: 2, amount: '1000 USDC', status: 'locked' },
-    { id: 3, amount: '250 USDC', status: 'grace-period' },
-  ]
+  const bonds: Array<{ id: number; amount: string; status: 'active' | 'locked' | 'grace-period' }> =
+    []
+
+  const focusBondCreation = () => {
+    const createBondInput = document.getElementById('bond-amount')
+    if (!createBondInput) return
+    createBondInput.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    ;(createBondInput as HTMLInputElement).focus()
+  }
 
   return (
     <div style={{ display: 'grid', gap: 'var(--credence-space-8)' }}>
@@ -87,25 +92,37 @@ export default function Bond() {
         </ActionCard>
 
         <ActionCard title="Active Bonds">
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid' }}>
-            {mockBonds.map((bond) => (
-              <li
-                key={bond.id}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  paddingBlock: 'var(--credence-space-3)',
-                  borderBottom:
-                    bond.id === mockBonds.length ? 'none' : '1px solid var(--border-default)',
-                  gap: 'var(--credence-space-4)',
-                }}
-              >
-                <span style={{ fontWeight: 500 }}>{bond.amount}</span>
-                <Badge variant={bond.status} />
-              </li>
-            ))}
-          </ul>
+          {bonds.length === 0 ? (
+            <EmptyState
+              illustration="bond"
+              title="No active bonds"
+              description="You do not have any active bonds yet. Create your first bond to start building on-chain reputation."
+              action={{
+                label: 'Create your first bond',
+                onClick: focusBondCreation,
+              }}
+            />
+          ) : (
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid' }}>
+              {bonds.map((bond) => (
+                <li
+                  key={bond.id}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    paddingBlock: 'var(--credence-space-3)',
+                    borderBottom:
+                      bond.id === bonds.length ? 'none' : '1px solid var(--border-default)',
+                    gap: 'var(--credence-space-4)',
+                  }}
+                >
+                  <span style={{ fontWeight: 500 }}>{bond.amount}</span>
+                  <Badge variant={bond.status} />
+                </li>
+              ))}
+            </ul>
+          )}
         </ActionCard>
       </div>
 

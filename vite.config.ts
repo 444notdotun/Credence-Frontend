@@ -20,12 +20,13 @@ export default defineConfig({
     setupFiles: ['./src/test-setup.ts'],
     coverage: {
       provider: 'v8',
-      include: ['src/components/AddressInput.tsx', 'src/components/ConfirmDialog.tsx', 'src/hooks/useFocusTrap.ts'],
+      include: ['src/components/AddressInput.tsx', 'src/components/ConfirmDialog.tsx', 'src/hooks/useFocusTrap.ts', 'src/components/ThemeToggle.tsx'],
       reporter: ['text', 'lcov'],
       thresholds: {
         'src/components/AddressInput.tsx': { lines: 90, branches: 90 },
         'src/components/ConfirmDialog.tsx': { branches: 90 },
         'src/hooks/useFocusTrap.ts': { branches: 85 },
+        'src/components/ThemeToggle.tsx': { lines: 85, branches: 85 },
       },
     },
   },

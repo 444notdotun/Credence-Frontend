@@ -1,15 +1,17 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useMemo, useRef, useState } from 'react'
 import Banner from '../components/Banner'
 import Disclaimer from '../components/Disclaimer'
 import { useToast } from '../components/ToastProvider'
 import Badge, { type BadgeVariant } from '../components/Badge'
 import ActionCard from '../components/ActionCard'
 import Button from '../components/Button'
-import ConfirmDialog, { type ConfirmDialogPenaltyBreakdown } from '../components/ConfirmDialog'
+import type { ConfirmDialogPenaltyBreakdown } from '../components/ConfirmDialog'
 import EmptyState from '../components/states/EmptyState'
 import { FormField } from '../components/forms/FormField'
 import AmountInput from '../components/AmountInput'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
+
+const ConfirmDialog = lazy(() => import('../components/ConfirmDialog'))
 
 type BondStatus = 'active' | 'locked' | 'grace-period'
 
@@ -63,7 +65,7 @@ export default function Bond() {
   const balanceLabel = mockedBalance.toLocaleString('en-US', { maximumFractionDigits: 2 })
   const displayError = error || (overBalance ? 'Amount exceeds available balance.' : undefined)
 
-  const bonds: MockBond[] = []
+  const bonds = initialBonds
 
   const handleAmountChange = (val: string) => {
     setAmount(val)
@@ -246,15 +248,17 @@ export default function Bond() {
       </div>
 
       {withdrawTarget && withdrawBreakdown && (
-        <ConfirmDialog
-          open
-          title="Confirm bond withdrawal"
-          subtitle={`You are withdrawing bond #${withdrawTarget.id} (${formatUsdc(withdrawTarget.amountUsdc)}).`}
-          breakdown={withdrawBreakdown}
-          onConfirm={confirmWithdraw}
-          onCancel={cancelWithdraw}
-          returnFocusRef={withdrawTriggerRef}
-        />
+        <Suspense fallback={null}>
+          <ConfirmDialog
+            open
+            title="Confirm bond withdrawal"
+            subtitle={`You are withdrawing bond #${withdrawTarget.id} (${formatUsdc(withdrawTarget.amountUsdc)}).`}
+            breakdown={withdrawBreakdown}
+            onConfirm={confirmWithdraw}
+            onCancel={cancelWithdraw}
+            returnFocusRef={withdrawTriggerRef}
+          />
+        </Suspense>
       )}
 
       <Disclaimer

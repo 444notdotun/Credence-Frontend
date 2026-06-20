@@ -51,6 +51,11 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/test-setup.ts'],
+    server: {
+      deps: {
+        inline: ['@exodus/bytes'],
+      },
+    },
     coverage: {
       provider: 'v8',
       include: ['src/components/AddressInput.tsx'],

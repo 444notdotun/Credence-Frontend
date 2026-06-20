@@ -47,4 +47,15 @@ export default defineConfig({
       },
     },
   },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./src/test-setup.ts'],
+    coverage: {
+      provider: 'v8',
+      include: ['src/components/AddressInput.tsx'],
+      reporter: ['text', 'lcov'],
+      thresholds: { lines: 90, branches: 90 },
+    },
+  },
 })

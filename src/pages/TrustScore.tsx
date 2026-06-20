@@ -92,7 +92,7 @@ export default function TrustScore() {
             />
           ) : (
             <ul style={{ listStyle: 'none', padding: 0 }}>
-              {activity.map((item) => (
+              {activity.map((item, index) => (
                 <li
                   key={item.id}
                   style={{
@@ -101,7 +101,7 @@ export default function TrustScore() {
                     alignItems: 'center',
                     padding: '0.75rem 0',
                     borderBottom:
-                      item.id === activity.length ? 'none' : '1px solid var(--border-default)',
+                      index === activity.length - 1 ? 'none' : '1px solid var(--border-default)',
                   }}
                 >
                   <div>

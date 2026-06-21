@@ -1,8 +1,9 @@
 import './ActivityTimeline.css'
+import EmptyState from './states/EmptyState'
 
-type ActivityTone = 'success' | 'warning' | 'info'
+export type ActivityTone = 'success' | 'warning' | 'info'
 
-interface ActivityItem {
+export interface ActivityItem {
   id: string
   timestamp: string
   title: string
@@ -61,34 +62,42 @@ export default function ActivityTimeline({ compact = false }: ActivityTimelinePr
           <p className="activity-surface__eyebrow">Activity Surface Concept</p>
           <h2 className="activity-surface__title">Attestation timeline</h2>
         </div>
-        <p className="activity-surface__summary">3 recent events</p>
+        {count > 0 && <p className="activity-surface__summary">{summary}</p>}
       </header>
 
-      <ul className="activity-timeline" aria-label="Recent timeline events">
-        {ACTIVITY_ITEMS.map((item) => (
-          <li className="activity-row" key={item.id}>
-            <div className="activity-row__rail" aria-hidden="true">
-              <span className={`activity-row__node activity-row__node--${item.tone}`} />
-              <span className="activity-row__line" />
-            </div>
-
-            <time className="activity-row__time">{item.timestamp}</time>
-
-            <div className="activity-row__content">
-              <div className="activity-row__title-wrap">
-                <p className="activity-row__title">{item.title}</p>
-                <span className={`activity-row__status activity-row__status--${item.tone}`}>
-                  {item.statusLabel}
-                </span>
+      {count === 0 ? (
+        <EmptyState
+          illustration="activity"
+          title="No activity yet"
+          description="Attestations and events will appear here once activity begins."
+        />
+      ) : (
+        <ul className="activity-timeline" aria-label="Recent timeline events">
+          {items.map((item) => (
+            <li className="activity-row" key={item.id}>
+              <div className="activity-row__rail" aria-hidden="true">
+                <span className={`activity-row__node activity-row__node--${item.tone}`} />
+                <span className="activity-row__line" />
               </div>
-              <p className="activity-row__description">{item.description}</p>
-              <p className="activity-row__actor">By {item.actor}</p>
-            </div>
 
-            <p className="activity-row__meta">{item.meta}</p>
-          </li>
-        ))}
-      </ul>
+              <time className="activity-row__time">{item.timestamp}</time>
+
+              <div className="activity-row__content">
+                <div className="activity-row__title-wrap">
+                  <p className="activity-row__title">{item.title}</p>
+                  <span className={`activity-row__status activity-row__status--${item.tone}`}>
+                    {item.statusLabel}
+                  </span>
+                </div>
+                <p className="activity-row__description">{item.description}</p>
+                <p className="activity-row__actor">By {item.actor}</p>
+              </div>
+
+              <p className="activity-row__meta">{item.meta}</p>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   )
 }

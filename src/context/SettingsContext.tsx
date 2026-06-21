@@ -20,6 +20,31 @@ interface SettingsState {
 
 const STORAGE_KEY = 'credence:settings'
 
+/**
+ * Orphaned key written by the pre-SettingsContext ThemeToggle. It is migrated
+ * into {@link STORAGE_KEY}.`themeMode` once on mount and then removed, so the
+ * theme has a single source of truth. See `docs/dark-mode.md`.
+ */
+const LEGACY_THEME_KEY = 'theme'
+
+function isThemeMode(value: unknown): value is ThemeMode {
+  return value === 'light' || value === 'dark' || value === 'system'
+}
+
+/**
+ * Reads the legacy standalone `'theme'` localStorage key. Returns a valid
+ * {@link ThemeMode} or null. Pure read — the orphan key is removed once on
+ * mount, not here.
+ */
+function readLegacyThemeMode(): ThemeMode | null {
+  try {
+    const raw = localStorage.getItem(LEGACY_THEME_KEY)
+    return isThemeMode(raw) ? raw : null
+  } catch {
+    return null
+  }
+}
+
 const defaultState: SettingsState = {
   themeMode: 'system',
   network: 'public',
@@ -55,9 +80,13 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   }
 
   const savedSettings = loadSavedSettings()
+  const legacyThemeMode = readLegacyThemeMode()
 
   const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
-    return (savedSettings?.themeMode as ThemeMode) || 'system'
+    // Precedence: credence:settings (the single source of truth) wins; otherwise
+    // adopt the legacy 'theme' value once (migration); otherwise default.
+    if (isThemeMode(savedSettings?.themeMode)) return savedSettings.themeMode
+    return legacyThemeMode ?? 'system'
   })
 
   const [network, setNetwork] = useState<string>(() => {
@@ -101,6 +130,18 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       // ignore
     }
   }, [themeMode, network, addressDisplay, toastsEnabled, autoDismiss])
+
+  // One-time migration: the legacy ThemeToggle persisted theme under a separate
+  // 'theme' key. Its value (if any) seeds `themeMode` above and is folded into
+  // credence:settings by the persist effect; here we drop the orphan key so the
+  // theme has exactly one source of truth.
+  useEffect(() => {
+    try {
+      localStorage.removeItem(LEGACY_THEME_KEY)
+    } catch {
+      // ignore
+    }
+  }, [])
 
   // Explicit save function
   const saveSettings = () => {

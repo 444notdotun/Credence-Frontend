@@ -448,4 +448,67 @@ describe('SettingsProvider', () => {
       expect(screen.getByTestId('toasts').textContent).toBe('true')
     })
   })
+
+  describe("legacy 'theme' key migration", () => {
+    it("adopts a valid legacy 'theme' value into themeMode and removes the key", () => {
+      localStorage.setItem('theme', 'dark')
+
+      renderWithProvider()
+
+      expect(screen.getByTestId('theme').textContent).toBe('dark')
+      // orphan key retired
+      expect(localStorage.getItem('theme')).toBeNull()
+      // migrated value folded into the single source of truth
+      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
+      expect(stored.themeMode).toBe('dark')
+    })
+
+    it("lets credence:settings win over a conflicting legacy 'theme' value", () => {
+      localStorage.setItem('theme', 'dark')
+
+      renderWithProvider({
+        themeMode: 'light',
+        network: 'public',
+        addressDisplay: 'short',
+        toastsEnabled: true,
+        autoDismiss: '5s',
+      })
+
+      // single source of truth wins; legacy key is still cleaned up
+      expect(screen.getByTestId('theme').textContent).toBe('light')
+      expect(localStorage.getItem('theme')).toBeNull()
+    })
+
+    it("ignores an invalid legacy 'theme' value and falls back to default", () => {
+      localStorage.setItem('theme', 'neon')
+
+      renderWithProvider()
+
+      expect(screen.getByTestId('theme').textContent).toBe('system')
+      expect(localStorage.getItem('theme')).toBeNull()
+    })
+
+    it('does not show migrated theme as an unsaved change', () => {
+      localStorage.setItem('theme', 'dark')
+
+      render(
+        <SettingsProvider>
+          <UnsavedProbe />
+        </SettingsProvider>,
+      )
+
+      expect(screen.getByTestId('theme').textContent).toBe('dark')
+      expect(screen.getByTestId('unsaved').textContent).toBe('false')
+    })
+  })
 })
+
+function UnsavedProbe() {
+  const s = useSettings()
+  return (
+    <div>
+      <span data-testid="theme">{s.themeMode}</span>
+      <span data-testid="unsaved">{String(s.hasUnsavedChanges)}</span>
+    </div>
+  )
+}

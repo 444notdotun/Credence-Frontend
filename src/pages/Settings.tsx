@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useSettings } from '../context/SettingsContext'
 import ThemeToggle from '../components/ThemeToggle'
 import { useToast } from '../components/ToastProvider'
@@ -20,22 +21,73 @@ export default function Settings() {
     autoDismiss,
     setAutoDismiss,
     saveSettings,
-    cancelSettings,
   } = useSettings()
   const { addToast } = useToast()
 
   useDocumentTitle('Settings')
 
+  const [draft, setDraft] = useState({
+    themeMode: themeMode as 'light' | 'dark' | 'system',
+    network,
+    addressDisplay,
+    toastsEnabled,
+    autoDismiss,
+  })
+
+  const isDirty =
+    draft.themeMode !== themeMode ||
+    draft.network !== network ||
+    draft.addressDisplay !== addressDisplay ||
+    draft.toastsEnabled !== toastsEnabled ||
+    draft.autoDismiss !== autoDismiss
+
+  const updateDraft = (key: string, value: string | boolean) => {
+    setDraft((prev) => ({ ...prev, [key]: value }))
+  }
+
   const handleSave = () => {
-    saveSettings()
+    if (!isDirty) return
+    const payload = {
+      themeMode: draft.themeMode,
+      network: draft.network,
+      addressDisplay: draft.addressDisplay,
+      toastsEnabled: draft.toastsEnabled,
+      autoDismiss: draft.autoDismiss,
+    }
+    setThemeMode(payload.themeMode)
+    setNetwork(payload.network)
+    setAddressDisplay(payload.addressDisplay)
+    setToastsEnabled(payload.toastsEnabled)
+    setAutoDismiss(payload.autoDismiss)
+    saveSettings(payload)
     addToast('success', 'Settings saved successfully')
   }
 
   const handleCancel = () => {
-    cancelSettings()
+    if (isDirty) {
+      const confirmed = window.confirm(
+        'You have unsaved changes. Are you sure you want to discard them?'
+      )
+      if (!confirmed) return
+    }
+    setDraft({
+      themeMode: themeMode as 'light' | 'dark' | 'system',
+      network,
+      addressDisplay,
+      toastsEnabled,
+      autoDismiss,
+    })
     addToast('info', 'Settings reverted to last saved state')
-    window.history.back()
   }
+
+  useEffect(() => {
+    if (!isDirty) return
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault()
+    }
+    window.addEventListener('beforeunload', handler)
+    return () => window.removeEventListener('beforeunload', handler)
+  }, [isDirty])
 
   return (
     <div className="settings-page">
@@ -80,7 +132,10 @@ export default function Settings() {
         <FormField id="theme-toggle" label="Quick toggle">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <ThemeToggle />
-            <span className="form-hint">Use the quick toggle to flip light/dark immediately.</span>
+            <span className="form-hint">
+              Use the quick toggle to flip light/dark immediately. Theme radio buttons above apply
+              on Save.
+            </span>
           </div>
         </FormField>
       </section>
@@ -146,13 +201,17 @@ export default function Settings() {
         <p className="form-hint">Control toast and notification behavior.</p>
 
         <FormField id="toasts-enabled" label="Enable toasts">
-          <Toggle checked={toastsEnabled} onChange={setToastsEnabled} ariaLabel="Enable toasts" />
+          <Toggle
+            checked={draft.toastsEnabled}
+            onChange={(v) => updateDraft('toastsEnabled', v)}
+            ariaLabel="Enable toasts"
+          />
         </FormField>
 
         <FormField id="auto-dismiss" label="Auto-dismiss duration">
           <Select
-            value={autoDismiss}
-            onChange={setAutoDismiss}
+            value={draft.autoDismiss}
+            onChange={(v) => updateDraft('autoDismiss', v)}
             options={[
               { value: 'off', label: 'Off (require manual dismiss)' },
               { value: '3s', label: '3 seconds' },
@@ -178,8 +237,14 @@ export default function Settings() {
       </section>
 
       <div className="settings-actions">
-        <button type="button" onClick={handleSave} style={{ padding: '0.5rem 0.75rem' }}>
-          Save
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={!isDirty}
+          aria-disabled={!isDirty}
+          style={{ padding: '0.5rem 0.75rem' }}
+        >
+          {isDirty ? 'Save' : 'Saved'}
         </button>
         <button type="button" onClick={handleCancel} style={{ padding: '0.5rem 0.75rem' }}>
           Cancel

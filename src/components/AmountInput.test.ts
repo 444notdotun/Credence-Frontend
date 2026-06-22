@@ -1,63 +1,99 @@
-import { describe, expect, it } from 'vitest'
-import { formatUSDC, normalizeUSDC, sanitizeUSDCInput } from './AmountInput'
+import { describe, it, expect } from 'vitest'
+import { normalizeUSDC, formatUSDC, sanitizeUSDCInput } from './AmountInput'
 
-describe('AmountInput formatting helpers', () => {
-  describe('sanitizeUSDCInput', () => {
-    it('passes through a valid decimal string', () => {
-      expect(sanitizeUSDCInput('123.45')).toBe('123.45')
-    })
-
-    it('strips non-numeric, non-dot characters', () => {
-      expect(sanitizeUSDCInput('abc123')).toBe('123')
-      expect(sanitizeUSDCInput('$100.00')).toBe('100.00')
-      expect(sanitizeUSDCInput('1,000.50')).toBe('1000.50')
-    })
-
-    it('truncates fractions to two decimal places', () => {
-      expect(sanitizeUSDCInput('12.345')).toBe('12.34')
-    })
-
-    it('normalizes leading zeroes while preserving decimal input', () => {
-      expect(sanitizeUSDCInput('00123')).toBe('123')
-      expect(sanitizeUSDCInput('00')).toBe('0')
-      expect(sanitizeUSDCInput('0.5')).toBe('0.5')
-    })
+// --- sanitizeUSDCInput ---
+describe('sanitizeUSDCInput', () => {
+  it('keeps valid decimal input unchanged', () => {
+    expect(sanitizeUSDCInput('123.45')).toBe('123.45')
   })
 
-  describe('normalizeUSDC', () => {
-    it('returns fixed two-decimal values for finite amounts', () => {
-      expect(normalizeUSDC('100')).toBe('100.00')
-      expect(normalizeUSDC('1,234.5')).toBe('1234.50')
-    })
-
-    it('drops invalid or empty values', () => {
-      expect(normalizeUSDC('')).toBe('')
-      expect(normalizeUSDC('not a number')).toBe('')
-    })
+  it('removes non-digit characters', () => {
+    expect(sanitizeUSDCInput('abc123')).toBe('123')
+    expect(sanitizeUSDCInput('$100.00')).toBe('100.00')
+    expect(sanitizeUSDCInput('1,000.50')).toBe('1000.50')
   })
 
-  describe('formatUSDC', () => {
-    it('formats display values with grouping and two decimals', () => {
-      expect(formatUSDC('1234.5')).toBe('1,234.50')
-    })
-
-    it('returns invalid text unchanged for manual correction', () => {
-      expect(formatUSDC('abc')).toBe('abc')
-    })
+  it('truncates fraction to 2 decimals', () => {
+    expect(sanitizeUSDCInput('12.345')).toBe('12.34')
+    expect(sanitizeUSDCInput('0.567')).toBe('0.56')
   })
 
-  it('keeps leading zero before a decimal point', () => {
+  it('removes leading zeros', () => {
+    expect(sanitizeUSDCInput('00123')).toBe('123')
+    expect(sanitizeUSDCInput('00')).toBe('0')
+  })
+
+  it('keeps leading zero for decimal values', () => {
     expect(sanitizeUSDCInput('0.5')).toBe('0.5')
+  })
+
+  it('handles multiple decimal points', () => {
+    expect(sanitizeUSDCInput('12.34.56')).toBe('12.34')
+  })
+
+  it('handles empty string', () => {
+    expect(sanitizeUSDCInput('')).toBe('')
+  })
+
+  it('handles single zero', () => {
+    expect(sanitizeUSDCInput('0')).toBe('0')
   })
 })
 
-// Export for manual testing in browser console
-if (typeof window !== 'undefined') {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (window as any).testAmountInput = {
-    sanitizeUSDCInput,
-    formatUSDC,
-    normalizeUSDC,
-  }
-  console.log('Test functions available as window.testAmountInput')
-}
+// --- formatUSDC ---
+describe('formatUSDC', () => {
+  it('adds thousands separators', () => {
+    expect(formatUSDC('1234.56')).toBe('1,234.56')
+    expect(formatUSDC('1234567.89')).toBe('1,234,567.89')
+  })
+
+  it('adds decimal places when missing', () => {
+    expect(formatUSDC('100')).toBe('100.00')
+    expect(formatUSDC('0.5')).toBe('0.50')
+  })
+
+  it('keeps already formatted values', () => {
+    expect(formatUSDC('1,234.56')).toBe('1,234.56')
+  })
+
+  it('handles empty string', () => {
+    expect(formatUSDC('')).toBe('')
+  })
+
+  it('returns invalid strings as-is', () => {
+    expect(formatUSDC('abc')).toBe('abc')
+  })
+})
+
+// --- normalizeUSDC ---
+describe('normalizeUSDC', () => {
+  it('rounds to 2 decimal places', () => {
+    expect(normalizeUSDC('123.456')).toBe('123.46')
+    expect(normalizeUSDC('123.4')).toBe('123.40')
+  })
+
+  it('removes commas', () => {
+    expect(normalizeUSDC('1,234.56')).toBe('1234.56')
+  })
+
+  it('clamps negative values to 0', () => {
+    expect(normalizeUSDC('-100')).toBe('0.00')
+    expect(normalizeUSDC('-1.50')).toBe('0.00')
+  })
+
+  it('handles zero', () => {
+    expect(normalizeUSDC('0')).toBe('0.00')
+  })
+
+  it('handles empty string', () => {
+    expect(normalizeUSDC('')).toBe('')
+  })
+
+  it('returns empty string for invalid input', () => {
+    expect(normalizeUSDC('abc')).toBe('')
+  })
+
+  it('handles large numbers', () => {
+    expect(normalizeUSDC('999999.99')).toBe('999999.99')
+  })
+})

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { apiFetch, ApiError } from '../api/client'
 import type { TrustScore } from '../api/types'
-import { isValidStellarAddress } from '../components/AddressInput'
+import { isValidStellarAddress } from '@/lib/stellar'
 
 export interface UseTrustScoreResult {
   /** Trust score payload from `GET /trust-score/:address`, or null before/after a failed fetch. */
@@ -64,7 +64,7 @@ export function useTrustScore(address: string): UseTrustScoreResult {
     try {
       const result = await apiFetch<TrustScore>(
         `/trust-score/${encodeURIComponent(targetAddress)}`,
-        { signal: controller.signal },
+        { signal: controller.signal }
       )
 
       if (!mountedRef.current || fetchId !== fetchIdRef.current) {
@@ -78,7 +78,11 @@ export function useTrustScore(address: string): UseTrustScoreResult {
       }
 
       setData(null)
-      setError(err instanceof ApiError ? err : new ApiError(0, 'Unexpected error while fetching trust score'))
+      setError(
+        err instanceof ApiError
+          ? err
+          : new ApiError(0, 'Unexpected error while fetching trust score')
+      )
     } finally {
       if (mountedRef.current && fetchId === fetchIdRef.current) {
         setIsLoading(false)
